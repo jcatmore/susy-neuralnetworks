@@ -2,9 +2,9 @@
 Studies on use of neural networks for separating supersymmetric particle decays from Standard Model backgrounds
 
 ## Pre-requisites
-(1) Python
-(2) Numpy (linear algebra), Matplotlib (graphics), SciKit-Learn (machine learning tool-kit): all available via a single installation of Anaconda - https://www.continuum.io
-(3) SKNN (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks): http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html
+- Python
+- Numpy (linear algebra), Matplotlib (graphics), SciKit-Learn (machine learning tool-kit): all available via a single installation of Anaconda - https://www.continuum.io
+- SKNN (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks): http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html
 
 ## Input data format
 Currently the examples use CSV files, with the first row of each file containing the name of the variables, e.g.
