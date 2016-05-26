@@ -9,11 +9,13 @@ Studies on use of neural networks for separating supersymmetric particle decays 
 ## Input data format
 Currently the examples use CSV files, with the first row of each file containing the name of the variables, e.g.
 
-``Var1Name,Var2Name,...,VarMName``
-``Event1Val1,Event1Val2,...,Event1ValM``
-``...``
-``EventNVal1,EventNVal2,...,EventNValM``
-
+```
+Var1Name,Var2Name,...,VarMName
+Event1Val1,Event1Val2,...,Event1ValM
+...
+EventNVal1,EventNVal2,...,EventNValM
+```
+`
 **To do:** set up a converter to enable ROOT files to be read in directly
 
 The assumption in the examples is that the background file is called ``SUSY_signal.csv`` and the background ``SM_background.csv``, but of course this can be changed in the scripts.
