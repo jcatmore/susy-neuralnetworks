@@ -2,6 +2,10 @@ import numpy as np
 import sys
 from sklearn.preprocessing import Imputer
 
+import os.path
+from ROOT import gROOT, gDirectory, TFile, TEventList, TCut
+
+
 ###############################################
 # Reconstruction errors
 def reconstructionError(test,predicted):
@@ -25,7 +29,7 @@ def reconstructionErrorByFeature(test,predicted):
 
 ###############################################
 # Read in the data in a convenient form
-def extractVariables(inputFile,maxEvents):
+def extractData(inputFile,maxEvents):
     dataContainer = {}
     featureNames = []
     lineCounter = -1
@@ -67,6 +71,64 @@ def extractVariables(inputFile,maxEvents):
     return dataContainer
 
 ###############################################
+
+###############################################
+# Read in the data in a convenient form
+def buildArraysFromROOT(tree,allowedFeatures,cut,skipEvents,maxEvents,name):
+    dataContainer = {}
+    featureNames = []
+    eventCounter = -1
+    gROOT.Reset()
+    
+    # Get branch names
+    for item in tree.GetListOfBranches():
+        featureName = item.GetName()
+        if featureName in allowedFeatures:
+            featureNames.append(featureName)
+            dataContainer[featureName] = []
+
+    # Build the event list
+    tcut = TCut(cut)
+    tree.Draw(">>eventList",tcut)
+    eventList = TEventList()
+    eventList = gDirectory.Get("eventList")
+    nSelectedEvents = eventList.GetN()
+
+    # Event loop
+    for i in range(0,nSelectedEvents):
+        if (i < skipEvents):
+            continue
+        if (i % 100 == 0):
+            sys.stdout.write("Reading %s: %d%%   \r" % (tree.GetName(),100*i/(maxEvents+skipEvents)) )
+            sys.stdout.flush()
+        if i >= (maxEvents+skipEvents):
+            break
+        selectedEvNum = eventList.GetEntry(i)
+        tree.GetEntry(selectedEvNum)
+        for feature in featureNames:
+            dataContainer[feature].append(tree.__getattr__(feature))
+    sys.stdout.write("\n")
+
+    # Make the numpy arrays
+    outputArray = np.array([])
+    for feature in dataContainer.keys():
+        column = dataContainer[feature]
+        feature_vector = np.asarray(column)
+        feature_vector = feature_vector.reshape(feature_vector.size,1)
+        if outputArray.shape[0]==0:
+            outputArray = feature_vector
+        else:
+            outputArray = np.concatenate((outputArray,feature_vector),axis=1)
+    imp = Imputer(missing_values=-999, strategy='mean', axis=0)
+    imp.fit(outputArray)
+    outputArray = imp.transform(outputArray)
+    print name
+    print "Events: ",outputArray.shape[0]
+    print "Features: ",outputArray.shape[1]
+    return outputArray
+
+###############################################
+
 
 ###############################################
 # Build data arrays

@@ -1,6 +1,8 @@
 import sys
 import pickle
 
+from ROOT import gROOT, TFile
+
 import numpy as np
 from sknn.mlp import Regressor, Layer
 from sklearn import preprocessing
@@ -11,30 +13,29 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 from mpl_toolkits.mplot3d import Axes3D
 
-from CommonTools import reconstructionError,reconstructionErrorByFeature,extractVariables,buildArrays,makeMetrics,areaUnderROC
-from featuresLists import susyFeatures, susyWeights
+from CommonTools import reconstructionError,reconstructionErrorByFeature,buildArraysFromROOT,makeMetrics,areaUnderROC
+from featuresLists import susyFeaturesNtup, susyWeightsNtup
 
 ###############################################
 # MAIN PROGRAM
 
 runTraining = True
-nEvents = 100000
+nBackgroundEvents = 5000
+nSignalEvents = 5000
 
-normalInputFile = open("SM_background.csv","r")
-signalInputFile = open("SUSY_signal.csv","r")
+# Selections
+cutBackground = "isSignal==0"
+cutSignal = "isSignal==1"
 
-# Get the data
-normalData = extractVariables(normalInputFile,2*nEvents)
-signalData = extractVariables(signalInputFile,nEvents)
+# Input file and TTree
+inputFile = TFile("TMVA_tree.root","read")
+tree = inputFile.Get("TMVA_tree")
 
 # Assemble data arrays
-cutNormal = np.ones(2*nEvents,dtype=bool)
-cutSignal = np.ones(nEvents,dtype=bool)
-
-X_train = buildArrays(susyFeatures,cutNormal,normalData,0,nEvents,"TRAINING SAMPLE")
-W_train = buildArrays(susyWeights,cutNormal,normalData,0,nEvents,"TRAINING SAMPLE WEIGHTS").reshape(X_train.shape[0])
-X_test = buildArrays(susyFeatures,cutNormal,normalData,nEvents,nEvents,"TESTING SAMPLE - same distribution as training")
-X_signal = buildArrays(susyFeatures,cutSignal,signalData,0,nEvents,"TESTING SAMPLE - different distribution")
+X_train = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,0,nBackgroundEvents,"TRAINING SAMPLE (background only)")
+W_train = buildArraysFromROOT(tree,susyWeightsNtup,cutBackground,0,nBackgroundEvents,"TRAINING SAMPLE WEIGHTS").reshape(X_train.shape[0])
+X_test = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,nBackgroundEvents,nBackgroundEvents,"TESTING SAMPLE - background")
+X_signal = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,0,nSignalEvents,"TESTING SAMPLE - signal")
 
 # Feature scaling
 min_max_scaler = preprocessing.MinMaxScaler()
@@ -108,7 +109,7 @@ for axA in axsA.ravel():
     nColumn = nColumn+1
 
 # Plotting - labels
-labelsList = [val for val in normalData.keys() if val in susyFeatures]
+labelsList = [val.GetName() for val in tree.GetListOfBranches() if val.GetName() in susyFeaturesNtup]
 figC, axsC = plt.subplots(6, 6)
 for axC in axsC.ravel():
     if len(labelsList)==0:

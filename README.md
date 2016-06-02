@@ -6,23 +6,27 @@ These Python scripts and accompanying text has been written primarily for those 
 
 ## Pre-requisites
 - Python
-- Numpy (linear algebra), Matplotlib (graphics), SciKit-Learn (machine learning tool-kit): all available via a single installation of Anaconda - https://www.continuum.io
+- Numpy (linear algebra)
+- Matplotlib (graphics) (or ROOT if you prefer)
+- SciKit-Learn (machine learning tool-kit)
 - SKNN (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks): http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html
+- ROOT (if you want to use n-tuple input files or do the plotting with ROOT tools)
 
 The SciKit-Learn documentation is itself an excellent introduction to machine learning concepts. For those with some spare time, there is an online course offered by Andrew Ng of Stanford University, on the [Coursera platform][https://www.coursera.org/instructor/andrewng]. Another course dedicated to Neural Networks, given by Geoffrey Hinton of Toronto University is also available on the same platform. An enormous amount of material on these topics can be readily found online or in the library.
 
-## Input data format
-Currently the examples use CSV files, with the first row of each file containing the name of the variables, e.g.
+## Input data formats
+Currently the examples can use CSV or ROOT n-tuple files. They are set up assuming ROOT input.
 
-```
-Var1Name,Var2Name,...,VarMName
-Event1Val1,Event1Val2,...,Event1ValM
-...
-EventNVal1,EventNVal2,...,EventNValM
-```
-`
+### CSV format
+Variables for a given event should be on the same line, separated by commas. The first row of each file must contain the name of the variables, e.g.
 
-The assumption in the examples is that the background file is called ``SUSY_signal.csv`` and the background ``SM_background.csv``, but of course this can be changed in the scripts.
+    Var1Name,Var2Name,...,VarMName
+    Event1Val1,Event1Val2,...,Event1ValM
+    ...
+    EventNVal1,EventNVal2,...,EventNValM
+
+### ROOT n-tuple
+All of the variables must be in a single TTree, and there must be a single value for each variable in each event (e.g. no vectors).
 
 ## Description of the python files
 - ``CommonTools.py``: methods for
@@ -67,7 +71,6 @@ It is instructive to play with the neural network hyperparameters (and tune with
 The file ``CrossValidation.py`` trains the two neural networks using a variety of hyperparameters (chosen either via a random search or manually) and writes the result to pickle files. The performance for each set of hyperparameters can then be assessed with the ``CrossValidation_results.py`` script. 
 
 ## To do
-- set up a converter to enable ROOT files to be read in directly
 - study effects of modifying the learning rule, momentum, etc
 - can the classifier distinguish between different SUSY processes?
 - can the auto-encoder do better that the classifiers on signal samples that the classifier has never seen?

@@ -20,29 +20,29 @@ from featuresLists import susyFeatures, susyWeights
 ###############################################
 # MAIN PROGRAM
 
-nEvents = 20000
-backgroundInputFile = open("SM_background.csv","r")
-signalInputFile = open("SUSY_signal.csv","r")
-outputTextReport = open("results.txt","w")
+nSignalEvents = 20000
+nBackgroundEvents = 20000
 
-# Get the data
-backgroundData = extractVariables(backgroundInputFile,2*nEvents)
-signalData = extractVariables(signalInputFile,2*nEvents)
+# Input file and TTree
+inputFile = TFile("TMVA_tree.root","read")
+tree = inputFile.Get("TMVA_tree")
+
+# Selections
+cutBackground = "isSignal==0"
+cutSignal = "isSignal==1"
 
 # Assemble data arrays
-cut = np.ones(2*nEvents,dtype=bool)
 # Training
-X_train_background = buildArrays(susyFeatures,cut,backgroundData,0,nEvents,"TRAINING SAMPLE (background)")
-X_train_signal = buildArrays(susyFeatures,cut,signalData,0,nEvents,"TRAINING SAMPLE (signal)")
+X_train_background = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,0,nBackgroundEvents,"TRAINING SAMPLE (background)")
+X_train_signal = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,0,nSignalEvents,"TRAINING SAMPLE (signal)")
 X_train = np.concatenate((X_train_background,X_train_signal),0)
-#W_train = buildArrays(susyWeights,cutNormal,normalData,0,nEvents,"TRAINING SAMPLE WEIGHTS").reshape(X_train.shape[0])
 # Testing
-X_test_background = buildArrays(susyFeatures,cut,backgroundData,nEvents,nEvents,"TESTING SAMPLE - same distribution as training")
-X_test_signal = buildArrays(susyFeatures,cut,signalData,nEvents,nEvents,"TESTING SAMPLE - different distribution")
+X_test_background = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,nBackgroundEvents,nBackgroundEvents+nSignalEvents,"TESTING SAMPLE (background)")
+X_test_signal = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,nBackgroundEvents,nBackgroundEvents+nSignalEvents,"TESTING SAMPLE (signal)")
 X_test = np.concatenate((X_test_background,X_test_signal),0)
 # Target/ground truth
-Y_background = np.zeros(nEvents).reshape(nEvents,1)
-Y_signal = np.ones(nEvents).reshape(nEvents,1)
+Y_background = np.zeros(nBackgroundEvents).reshape(nBackgroundEvents,1)
+Y_signal = np.ones(nSignalEvents).reshape(nSignalEvents,1)
 Y = np.concatenate((Y_background,Y_signal),0)
 
 # Feature scaling - has to be done separately for the autoencoder and the classifier

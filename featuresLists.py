@@ -70,7 +70,51 @@ susyFeatures = [
                 "invMass",
                 "metrel"
                 ]
+
+susyFeaturesNtup = [
+                    "lep_pT1",
+                    "lep_pT2",
+                    "lep_E1",
+                    "lep_E2",
+                    "lep_eta1",
+                    "lep_eta2",
+                    "lep_z01",
+                    "lep_z02",
+                    "lep_d01",
+                    "lep_d02",
+                    "lep_phi1",
+                    "lep_phi2",
+                    "lep_d0sig1",
+                    "lep_d0sig2",
+                    "lep_z0sintheta1",
+                    "lep_z0sintheta2",
+                    "dphi_lep1_met",
+                    "dphi_lep2_met",
+                    "lep1_costheta",
+                    "lep2_costheta",
+                    "dphi_lep1_lep2",
+                    "dR_lep1_lep2",
+                    "hT1",
+                    "hT2",
+                    "hT3",
+                    "hT4",
+                    "hTmiss",
+                    "alphaT",
+                    "mt",
+                    "met_phi",
+                    "met",
+                    "met_x",
+                    "met_y",
+                    "mt2",
+                    "mll",
+                    "metrel",
+                    "isSignal",
+                    "isBkg"
+                    ]
+
 susyWeights = [ "weight" ]
+
+susyWeightsNtup = [ "wgt" ]
 
 
 
