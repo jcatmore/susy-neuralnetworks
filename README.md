@@ -6,19 +6,19 @@ These Python scripts and accompanying text has been written primarily for those 
 
 ## Installing the pre-requisites
 - Python
-- Numpy (linear algebra)
-- Scipy
-- Matplotlib (graphics) (or ROOT if you prefer)
-- SciKit-Learn (machine learning tool-kit)
-- SKNN (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks): http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html
+- [Numpy](http://www.numpy.org) (linear algebra)
+- [Scipy](https://www.scipy.org)
+- [Matplotlib](http://matplotlib.org) (graphics) (or ROOT if you prefer)
+- [SciKit-Learn](http://scikit-learn.org/stable/) (machine learning tool-kit)
+- [SKNN](http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html) (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks) 
 - ROOT (if you want to use n-tuple input files or do the plotting with ROOT tools)
 
 ### Special instructions for Mac users 
-First you should install pip. This can be obtained by downloading [this file][https://bootstrap.pypa.io/get-pip.py] and then
+First you should install pip. This can be obtained by downloading [get-pip.py](https://bootstrap.pypa.io/get-pip.py) and then
 
     [sudo] python get-pip.py
 
-To avoid issues with Python versions, you should now install and set up ``virtualenv`` ([link][https://virtualenv.pypa.io/en/stable/]) to set up a ring-fenced Python instance. 
+To avoid issues with Python versions, you should now install and set up ``virtualenv`` ([link](https://virtualenv.pypa.io/en/stable/)) to set up a ring-fenced Python instance. 
 
     [sudo] pip install virtualenv
     cd $HOME
@@ -59,7 +59,7 @@ You would then execute the python scripts using this executable, e.g.
     $HOME/ENV/bin/frameworkpython autoencoder.py
 
 ## General information
-The SciKit-Learn documentation is itself an excellent introduction to machine learning concepts. For those with some spare time, there is an online course offered by Andrew Ng of Stanford University, on the [Coursera platform][https://www.coursera.org/instructor/andrewng]. Another course dedicated to Neural Networks, given by Geoffrey Hinton of Toronto University is also available on the same platform. An enormous amount of material on these topics can be readily found online or in the library.
+The SciKit-Learn documentation is itself an excellent introduction to machine learning concepts. For those with some spare time, there is an online course offered by Andrew Ng of Stanford University, on the [Coursera platform](https://www.coursera.org/instructor/andrewng). Another course dedicated to Neural Networks, given by Geoffrey Hinton of Toronto University is also available on the same platform. An enormous amount of material on these topics can be readily found online or in the library.
 
 ## Input data formats
 Currently the examples can use CSV or ROOT n-tuple files. They are set up assuming ROOT input.
