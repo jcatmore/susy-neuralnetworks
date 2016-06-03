@@ -4,14 +4,56 @@ Studies on use of neural networks for separating SUSY particle decays from Stand
 ## Introduction
 These Python scripts and accompanying text has been written primarily for those working on SUSY and Exotics topics in the High Energy Physics group at the University of Oslo. 
 
-## Pre-requisites
+## Installing the pre-requisites
 - Python
 - Numpy (linear algebra)
+- Scipy
 - Matplotlib (graphics) (or ROOT if you prefer)
 - SciKit-Learn (machine learning tool-kit)
 - SKNN (interface between SciKit-Learn and Lasagne/Theano enabling quick building of neural networks): http://scikit-neuralnetwork.readthedocs.io/en/latest/index.html
 - ROOT (if you want to use n-tuple input files or do the plotting with ROOT tools)
 
+### Special instructions for Mac users 
+First you should install pip. This can be obtained by downloading [this file][https://bootstrap.pypa.io/get-pip.py] and then
+    [sudo] python get-pip.py
+
+To avoid issues with Python versions, you should now install and set up ``virtualenv`` ([link][https://virtualenv.pypa.io/en/stable/]) to set up a ring-fenced Python instance. 
+    [sudo] pip install virtualenv
+    cd $HOME
+    virtualenv ENV
+
+where ``ENV`` is whatever name you wish to give to the virtualenv location.
+
+Once this is done you should install the above packages using the ``pip`` version available in the virtualenv, rather than the system version that you installed before e.g.
+    $HOME/ENV/bin/pip install numpy
+    $HOME/ENV/bin/pip install scipy
+    $HOME/ENV/bin/pip install matplotlib
+    $HOME/ENV/bin/pip install scikit-learn
+    $HOME/ENV/bin/pip install scikit-neuralnetwork
+
+When running the scripts, you should also use the python version in the virtualenv rather than the system version, e.g.
+    $HOME/ENV/bin/python autoencoder.py
+
+If you are using the non-ROOT graphics package matplotlib, there is one extra issue, namely that the GUI is incompatible with the virtualenv. To get around this add the following script (call it ``frameworkpython``) to ``$HOME/ENV/bin``:
+
+    #!/bin/bash
+    
+    # what real Python executable to use
+    PYVER=2.7
+    PATHTOPYTHON=/usr/local/bin/
+    PYTHON=${PATHTOPYTHON}python${PYVER}
+
+    # find the root of the virtualenv, it should be the parent of the dir this script is in
+    ENV=`$PYTHON -c "import os; print os.path.abspath(os.path.join(os.path.dirname(\"$0\"), '..'))"`
+
+    # now run Python with the virtualenv set as Python's HOME
+    export PYTHONHOME=$ENV
+    exec $PYTHON "$@"
+
+You would then execute the python scripts using this executable, e.g.
+    $HOME/ENV/bin/frameworkpython autoencoder.py
+
+## General information
 The SciKit-Learn documentation is itself an excellent introduction to machine learning concepts. For those with some spare time, there is an online course offered by Andrew Ng of Stanford University, on the [Coursera platform][https://www.coursera.org/instructor/andrewng]. Another course dedicated to Neural Networks, given by Geoffrey Hinton of Toronto University is also available on the same platform. An enormous amount of material on these topics can be readily found online or in the library.
 
 ## Input data formats

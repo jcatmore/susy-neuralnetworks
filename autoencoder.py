@@ -7,7 +7,6 @@ import numpy as np
 from sknn.mlp import Regressor, Layer
 from sklearn import preprocessing
 
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 from sklearn import metrics
@@ -20,8 +19,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 5000
-nSignalEvents = 5000
+nBackgroundEvents = 20000
+nSignalEvents = 20000
 
 # Selections
 cutBackground = "isSignal==0"
