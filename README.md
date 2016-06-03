@@ -15,9 +15,11 @@ These Python scripts and accompanying text has been written primarily for those 
 
 ### Special instructions for Mac users 
 First you should install pip. This can be obtained by downloading [this file][https://bootstrap.pypa.io/get-pip.py] and then
+
     [sudo] python get-pip.py
 
 To avoid issues with Python versions, you should now install and set up ``virtualenv`` ([link][https://virtualenv.pypa.io/en/stable/]) to set up a ring-fenced Python instance. 
+
     [sudo] pip install virtualenv
     cd $HOME
     virtualenv ENV
@@ -25,6 +27,7 @@ To avoid issues with Python versions, you should now install and set up ``virtua
 where ``ENV`` is whatever name you wish to give to the virtualenv location.
 
 Once this is done you should install the above packages using the ``pip`` version available in the virtualenv, rather than the system version that you installed before e.g.
+
     $HOME/ENV/bin/pip install numpy
     $HOME/ENV/bin/pip install scipy
     $HOME/ENV/bin/pip install matplotlib
@@ -32,6 +35,7 @@ Once this is done you should install the above packages using the ``pip`` versio
     $HOME/ENV/bin/pip install scikit-neuralnetwork
 
 When running the scripts, you should also use the python version in the virtualenv rather than the system version, e.g.
+
     $HOME/ENV/bin/python autoencoder.py
 
 If you are using the non-ROOT graphics package matplotlib, there is one extra issue, namely that the GUI is incompatible with the virtualenv. To get around this add the following script (call it ``frameworkpython``) to ``$HOME/ENV/bin``:
@@ -51,6 +55,7 @@ If you are using the non-ROOT graphics package matplotlib, there is one extra is
     exec $PYTHON "$@"
 
 You would then execute the python scripts using this executable, e.g.
+
     $HOME/ENV/bin/frameworkpython autoencoder.py
 
 ## General information
