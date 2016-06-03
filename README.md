@@ -24,7 +24,7 @@ To avoid issues with Python versions, you should now install and set up ``virtua
     cd $HOME
     virtualenv ENV
 
-where ``ENV`` is whatever name you wish to give to the virtualenv location.
+where ``ENV`` is whatever name you wish to give to the virtualenv location. This is the last time you should need to use ``sudo``: from now on you will not be touching the system-wide configuration.
 
 Once this is done you should install the above packages using the ``pip`` version available in the virtualenv, rather than the system version that you installed before e.g.
 
