@@ -22,8 +22,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 5000
-nSignalEvents = 5000
+nBackgroundEvents = 50000
+nSignalEvents = 50000
 
 # Selections
 cutBackground = "isSignal==0"
@@ -63,7 +63,7 @@ if runTraining:
                     Layer("Rectifier", units=36),
                     Layer("Softmax")],
             learning_rate=0.01,
-            batch_size = 100,
+            batch_size = 10,
             n_iter=100)
     # Training
     nn.fit(X_train,Y)
@@ -97,10 +97,10 @@ ax1, ax2 = axsA.ravel()
 for ax in ax1, ax2:
     ax.set_ylabel("Events")
     ax.set_xlabel("NN signal probability")
-ax1.hist(probabilities_train[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 100, (-0.5,1.5), facecolor='blue', alpha=0.4, histtype='stepfilled')
-ax1.hist(probabilities_train[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 100, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
-ax2.hist(probabilities_test[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 100, (-0.5,1.5), facecolor='green', alpha=0.4, histtype='stepfilled')
-ax2.hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 100, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
+ax1.hist(probabilities_train[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='blue', alpha=0.4, histtype='stepfilled')
+ax1.hist(probabilities_train[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
+ax2.hist(probabilities_test[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='green', alpha=0.4, histtype='stepfilled')
+ax2.hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
 
 
 # Plotting - performance curves

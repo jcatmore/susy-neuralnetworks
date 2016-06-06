@@ -107,9 +107,7 @@ susyFeaturesNtup = [
                     "met_y",
                     "mt2",
                     "mll",
-                    "metrel",
-                    "isSignal",
-                    "isBkg"
+                    "metrel"
                     ]
 
 susyWeights = [ "weight" ]

@@ -19,8 +19,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 20000
-nSignalEvents = 20000
+nBackgroundEvents = 50000
+nSignalEvents = 50000
 
 # Selections
 cutBackground = "isSignal==0"
@@ -51,10 +51,10 @@ if runTraining:
     print "Starting neural network training"
     nn = Regressor(
                    layers=[
-                           Layer("Rectifier", units=10),
+                           Layer("Rectifier", units=12),
                            Layer("Linear")],
                    learning_rate=0.01,
-                   #batch_size = 10,
+                   batch_size = 10,
                    #learning_rule = "momentum",
                    n_iter=100)
     # Training
@@ -102,9 +102,9 @@ for axD in axsD.ravel():
 figA, axsA = plt.subplots(6, 6)
 nColumn = 0
 for axA in axsA.ravel():
-    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled', normed=True)
-    axA.hist(X_signal[:,nColumn][rec_errors_sig > -1.75], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-    #axA.hist(X_signal[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled')
+    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled')
+    #axA.hist(X_signal[:,nColumn][rec_errors_sig > -1.75], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
+    axA.hist(X_signal[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled')
     nColumn = nColumn+1
 
 # Plotting - labels
