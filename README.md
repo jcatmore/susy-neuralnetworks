@@ -117,6 +117,9 @@ It is instructive to play with the neural network hyperparameters (and tune with
 
 The file ``CrossValidation.py`` trains the two neural networks using a variety of hyperparameters (chosen either via a random search or manually) and writes the result to pickle files. The performance for each set of hyperparameters can then be assessed with the ``CrossValidation_results.py`` script. 
 
+## Support vector machine example
+The files ``svm_susy.py`` and ``svm_susy_classifier.py`` demonstrate the use of an alternative algorithm type: one-class and multi-class support vector machines. These algorithms are boundary methods, which is to say, they form a hypervolume around the points, with those falling on one side of the boundary being in one class, and those on the other side being in the other. 
+
 ## To do
 - study effects of modifying the learning rule, momentum, etc
 - can the classifier distinguish between different SUSY processes?
