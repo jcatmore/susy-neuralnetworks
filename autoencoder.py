@@ -8,9 +8,7 @@ from sknn.mlp import Regressor, Layer
 from sklearn import preprocessing
 
 import matplotlib.pyplot as plt
-
 from sklearn import metrics
-from mpl_toolkits.mplot3d import Axes3D
 
 from CommonTools import reconstructionError,reconstructionErrorByFeature,buildArraysFromROOT,makeMetrics,areaUnderROC
 from featuresLists import susyFeaturesNtup, susyWeightsNtup
@@ -51,12 +49,12 @@ if runTraining:
     print "Starting neural network training"
     nn = Regressor(
                    layers=[
-                           Layer("Rectifier", units=12),
+                           Layer("Rectifier", units=30),
                            Layer("Linear")],
                    learning_rate=0.01,
-                   batch_size = 10,
+                   batch_size = 100,
                    #learning_rule = "momentum",
-                   n_iter=100)
+                   n_iter=500)
     # Training
     nn.fit(X_train,Y_train)
     pickle.dump(nn, open('autoencoder.pkl', 'wb'))
@@ -90,36 +88,36 @@ ax2.hist(rec_errors_diff, 250, facecolor='green', alpha=0.4, histtype='stepfille
 ax3.hist(rec_errors_diff, 250, facecolor='green', alpha=0.4, histtype='stepfilled')
 ax3.hist(rec_errors_sig, 250, facecolor='red', alpha=0.4, histtype='stepfilled')
 
-# Plotting - reconstruction error per variable
-figD, axsD = plt.subplots(6, 6)
-nColumn = 0
-for axD in axsD.ravel():
-    axD.hist(rec_errors_varwise_diff[:,nColumn], 250, facecolor='green', alpha=0.4, histtype='stepfilled', normed=True)
-    axD.hist(rec_errors_varwise_sig[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-    nColumn = nColumn+1
-
-# Plotting - raw variables
-figA, axsA = plt.subplots(6, 6)
-nColumn = 0
-for axA in axsA.ravel():
-    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled')
-    #axA.hist(X_signal[:,nColumn][rec_errors_sig > -1.75], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-    axA.hist(X_signal[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled')
-    nColumn = nColumn+1
-
-# Plotting - labels
-labelsList = [val.GetName() for val in tree.GetListOfBranches() if val.GetName() in susyFeaturesNtup]
-figC, axsC = plt.subplots(6, 6)
-for axC in axsC.ravel():
-    if len(labelsList)==0:
-        break
-    label = labelsList[0]
-    axC.text(0.1, 0.5, label, fontsize=10)
-    axC.set_xticklabels([])
-    axC.set_yticklabels([])
-    axC.set_xticks([])
-    axC.set_yticks([])
-    labelsList.pop(0)
+## Plotting - reconstruction error per variable
+#figD, axsD = plt.subplots(6, 6)
+#nColumn = 0
+#for axD in axsD.ravel():
+#    axD.hist(rec_errors_varwise_diff[:,nColumn], 250, facecolor='green', alpha=0.4, histtype='stepfilled', normed=True)
+#    axD.hist(rec_errors_varwise_sig[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
+#    nColumn = nColumn+1
+#
+## Plotting - raw variables
+#figA, axsA = plt.subplots(6, 6)
+#nColumn = 0
+#for axA in axsA.ravel():
+#    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled')
+#    #axA.hist(X_signal[:,nColumn][rec_errors_sig > -1.75], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
+#    axA.hist(X_signal[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled')
+#    nColumn = nColumn+1
+#
+## Plotting - labels
+#labelsList = [val.GetName() for val in tree.GetListOfBranches() if val.GetName() in susyFeaturesNtup]
+#figC, axsC = plt.subplots(6, 6)
+#for axC in axsC.ravel():
+#    if len(labelsList)==0:
+#        break
+#    label = labelsList[0]
+#    axC.text(0.1, 0.5, label, fontsize=10)
+#    axC.set_xticklabels([])
+#    axC.set_yticklabels([])
+#    axC.set_xticks([])
+#    axC.set_yticks([])
+#    labelsList.pop(0)
 
 # Plotting - performance curves
 true_positive,false_positive,precisions,recalls,f1s = makeMetrics(200,rec_errors_sig,rec_errors_diff)
