@@ -22,8 +22,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 50000
-nSignalEvents = 50000
+nBackgroundEvents = 10000
+nSignalEvents = 10000
 
 # Selections
 cutBackground = "isSignal==0"
@@ -113,8 +113,8 @@ axB1.plot(fpr, tpr, label='ROC curve')
 axB1.plot([0, 1], [0, 1], 'k--')
 axB1.set_xlim([0.0, 1.0])
 axB1.set_ylim([0.0, 1.05])
-axB1.set_xlabel('False Anomaly Rate')
-axB1.set_ylabel('True Anomaly Rate')
+axB1.set_xlabel('False Signal Rate')
+axB1.set_ylabel('True Signal Rate')
 # Precision/recall
 precision, recall, threshold = precision_recall_curve(Y, probabilities_test[:,1])
 axB2.plot(recall, precision, label='Recall vs precision')
@@ -135,14 +135,3 @@ plt.show()
 #    axA.hist(X_anomaly[:,nColumn][rec_errors_anomaly > -3.0], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
 #    #axA.hist(X_anomaly[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
 #    nColumn = nColumn+1
-
-
-
-
-
-
-
-
-
-
-

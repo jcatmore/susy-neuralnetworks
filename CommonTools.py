@@ -155,7 +155,7 @@ def buildArrays(allowedFeatures,cut,data,skipEvents,nEvents,name):
 
 ###############################################
 # Generate ROC, precision,recall arrays
-def makeMetrics(nPoints,anomalous,normal):
+def makeMetrics(nPoints,anomalous,normal,reverse=False):
     mins = np.array([np.amin(anomalous),np.amin(normal)])
     maxs = np.array([np.amax(anomalous),np.amax(normal)])
     min = np.floor(np.amin(mins))
@@ -168,12 +168,22 @@ def makeMetrics(nPoints,anomalous,normal):
     distances = []
     f1s = []
     for slide in range(0,nPoints,1):
-        cut = min + (slide*gradation)
-        n_TP = float(np.sum(anomalous > cut))
-        n_FP = float(np.sum(normal > cut))
-        n_TN = float(np.sum(normal < cut))
-        n_FN = float(np.sum(anomalous < cut))
-        if (n_TP==0.0):
+        cut = max - (slide*gradation)
+        n_TP=0.0
+        n_FP=0.0
+        n_TN=0.0
+        n_FN=0.0
+        if (reverse==False):
+            n_TP = float(np.sum(anomalous > cut))
+            n_FP = float(np.sum(normal > cut))
+            n_TN = float(np.sum(normal < cut))
+            n_FN = float(np.sum(anomalous < cut))
+        if (reverse==True):
+            n_TP = float(np.sum(anomalous < cut))
+            n_FP = float(np.sum(normal < cut))
+            n_TN = float(np.sum(normal > cut))
+            n_FN = float(np.sum(anomalous > cut))
+        if (n_TP+n_FP==0.0 or n_TP+n_FN==0.0):
             break
         n_anomalous = float(anomalous.shape[0])
         n_normal = float(normal.shape[0])
