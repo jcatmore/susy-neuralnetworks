@@ -3,7 +3,9 @@ import pickle
 
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import preprocessing
 from ROOT import gROOT, TFile
 
 import matplotlib.mlab as mlab
@@ -49,21 +51,29 @@ Y_sig = np.ones(nSignalEvents).reshape(nSignalEvents,1)
 Y = np.concatenate((Y_bg,Y_sig),0)
 
 # Feature scaling
-#min_max_scaler = preprocessing.MinMaxScaler()
-#X_train = min_max_scaler.fit_transform(X_train)
-#X_test = min_max_scaler.transform(X_test)
+min_max_scaler = preprocessing.MinMaxScaler()
+X_train = min_max_scaler.fit_transform(X_train)
+X_test = min_max_scaler.transform(X_test)
 
+
+# Model building
 #clf = RandomForestClassifier(n_estimators=10)
 #clf = clf.fit(X_train, Y.ravel())
-
-clf = DecisionTreeClassifier(max_depth=5)
-clf = clf.fit(X_train, Y.ravel())
+#clf = DecisionTreeClassifier(max_depth=5)
+#clf = clf.fit(X_train, Y.ravel())
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0,max_depth=1, random_state=0)
+clf.fit(X_train, Y.ravel())
 
 # Testing
 pred_train = clf.predict(X_train)
 pred_test = clf.predict(X_test)
 probabilities_train = clf.predict_proba(X_train)
 probabilities_test = clf.predict_proba(X_test)
+
+# Feature importance
+feature_importance = clf.feature_importances_
+# make importances relative to max importance
+feature_importance = 100.0 * (feature_importance / feature_importance.max())
 
 print "Training sample...."
 print "  Signal identified as signal (%)        : ",100.0*np.sum(pred_train[nBackgroundEvents:nBackgroundEvents+nSignalEvents]==1.0)/nSignalEvents
@@ -79,7 +89,6 @@ print "  Background identified as background (%): ",100.0*np.sum(pred_test[0:nBa
 
 # Plotting - probabilities
 #print probabilities_train[(Y==0.0).reshape(2*nEvents,)]
-
 figA, axsA = plt.subplots(2, 1)
 ax1, ax2 = axsA.ravel()
 for ax in ax1, ax2:
@@ -112,8 +121,16 @@ axB2.set_ylim([0.0, 1.05])
 axB2.set_xlabel('Precision')
 axB2.set_ylabel('Recall')
 
-plt.show()
+# Plotting - variable importance
+pos = np.arange(feature_importance.shape[0]) + .5
+figC, axsC = plt.subplots()
+axsC.barh(pos, feature_importance, align='center')
+axsC.set_yticks(pos)
+axsC.set_yticklabels(susyFeaturesNtup)
+axsC.set_xlabel('Relative Importance')
+axsC.set_title('Variable Importance')
 
+plt.show()
 
 ## Plotting - raw variables
 #figA, axsA = plt.subplots(4, 4)
