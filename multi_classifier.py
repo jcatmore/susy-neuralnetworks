@@ -34,8 +34,7 @@ X_train_bg_all = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,0,nAllB
 #W_bg_all = buildArraysFromROOT(tree,susyWeightsNtup,cutBackground,0,nAllBackgroundEvents,"EVENT WEIGHTS (background)").reshape(X_train_bg_all.shape[0])
 X_test_bg_all = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,nAllBackgroundEvents,nAllBackgroundEvents,"TESTING SAMPLE (background)")
 
-cutList = ["isSignal==1 && massSplit<99",
-           "isSignal==1 && massSplit>99 && massSplit<199",
+cutList = ["isSignal==1 && massSplit<199",
            "isSignal==1 && massSplit>199 && massSplit<299",
            "isSignal==1 && massSplit>299 && massSplit<399",
            "isSignal==1 && massSplit>399 && massSplit<499",
@@ -43,9 +42,9 @@ cutList = ["isSignal==1 && massSplit<99",
            "isSignal==1 && massSplit>599 && massSplit<699"]
 
 # Set up the axes for plotting
-figROC, axsROC = plt.subplots(2,4)
+figROC, axsROC = plt.subplots(2,3)
 axesROC = axsROC.ravel()
-figProb, axsProb = plt.subplots(2,4)
+figProb, axsProb = plt.subplots(2,3)
 axesProb = axsProb.ravel()
 
 # MAIN LOOP OVER SIGNAL SAMPLES
@@ -91,11 +90,11 @@ for cut in cutList:
         print "Starting neural network training"
         nn = Classifier(
                         layers=[
-                                Layer("Rectifier", units=36),
+                                Layer("Rectifier", units=49),
                                 Layer("Softmax")],
                         learning_rate=0.01,
                         batch_size = 100,
-                        n_iter=100)
+                        n_iter=500)
     # Training
     nn.fit(X_train,Y)
     pickle.dump(nn, open('nn_susy_classification.pkl', 'wb'))
@@ -154,29 +153,3 @@ for cut in cutList:
 
 plt.show()
 
-
-
-
-
-#figA, axsA = plt.subplots(2, 1)
-#ax1, ax2 = axsA.ravel()
-#for ax in ax1, ax2:
-#    ax.set_ylabel("Events")
-#    ax.set_xlabel("NN signal probability")
-#ax1.hist(probabilities_train[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='blue', alpha=0.4, histtype='stepfilled')
-#ax1.hist(probabilities_train[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
-#ax2.hist(probabilities_test[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='green', alpha=0.4, histtype='stepfilled')
-#ax2.hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
-#
-#
-
-
-
-## Plotting - raw variables
-#figA, axsA = plt.subplots(4, 4)
-#nColumn = 0
-#for axA in axsA.ravel():
-#    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled', normed=True)
-#    axA.hist(X_anomaly[:,nColumn][rec_errors_anomaly > -3.0], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    #axA.hist(X_anomaly[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    nColumn = nColumn+1

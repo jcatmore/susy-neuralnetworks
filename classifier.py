@@ -27,7 +27,9 @@ nSignalEvents = 10000
 
 # Selections
 cutBackground = "isSignal==0"
-cutSignal = "isSignal==1"
+cutSignal = "isSignal==1 && massSplit>399 && massSplit<499"
+cutSignal2 = "isSignal==1 && massSplit>599 && massSplit<699"
+
 
 # Input file and TTree
 inputFile = TFile("TMVA_tree.root","read")
@@ -36,7 +38,7 @@ tree = inputFile.Get("TMVA_tree")
 # Build data arrays
 X_train_bg = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,0,nBackgroundEvents,"TRAINING SAMPLE (background)")
 W_bg = buildArraysFromROOT(tree,susyWeightsNtup,cutBackground,0,nBackgroundEvents,"EVENT WEIGHTS (background)").reshape(X_train_bg.shape[0])
-X_train_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,0,nSignalEvents,"TRAINING SAMPLE (signal)")
+X_train_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal2,0,nSignalEvents,"TRAINING SAMPLE (signal)")
 W_sig = buildArraysFromROOT(tree,susyWeightsNtup,cutSignal,0,nSignalEvents,"EVENT WEIGHTS (signal)").reshape(X_train_sig.shape[0])
 X_train = np.concatenate((X_train_bg,X_train_sig),0)
 W = np.concatenate((W_bg,W_sig),0)

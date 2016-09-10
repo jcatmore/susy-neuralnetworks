@@ -100,15 +100,28 @@ susyFeaturesNtup = [
                     "hT4",
                     "hTmiss",
                     "alphaT",
-                    "mt",
+                    "mt_lep1",
+                    "mt_lep2",
                     "met_phi",
                     "met",
                     "met_x",
                     "met_y",
                     "mt2",
                     "mll",
-                    "metrel"
-                    ]
+                    "metrel",
+                    "njet",
+                    "bnjet",
+                    "sph",
+                    "Rsq",
+                    "MR",
+                    "mct",
+                    "thrust",
+                    "R2",
+                    "meff",
+                    "pTll",
+                    "metrel_pTjet",
+                    "ptlep1_ptjet1" 
+                   ]
 
 susyWeights = [ "weight" ]
 

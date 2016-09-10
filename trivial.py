@@ -16,8 +16,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 50000
-nSignalEvents = 50000
+nBackgroundEvents = 55000
+nSignalEvents = 55000
 
 # Selections
 cutBackground = "isSignal==0"

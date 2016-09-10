@@ -17,8 +17,8 @@ from featuresLists import susyFeaturesNtup, susyWeightsNtup
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 50000
-nSignalEvents = 50000
+nBackgroundEvents = 100000
+nSignalEvents = 55000
 
 # Selections
 cutBackground = "isSignal==0"
@@ -54,7 +54,7 @@ if runTraining:
                    learning_rate=0.01,
                    batch_size = 100,
                    #learning_rule = "momentum",
-                   n_iter=500)
+                   n_iter=100)
     # Training
     nn.fit(X_train,Y_train)
     pickle.dump(nn, open('autoencoder.pkl', 'wb'))

@@ -58,9 +58,7 @@ X_test = min_max_scaler.transform(X_test)
 
 # Model building
 #clf = RandomForestClassifier(n_estimators=10)
-#clf = clf.fit(X_train, Y.ravel())
 #clf = DecisionTreeClassifier(max_depth=5)
-#clf = clf.fit(X_train, Y.ravel())
 clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0,max_depth=1, random_state=0)
 clf.fit(X_train, Y.ravel())
 

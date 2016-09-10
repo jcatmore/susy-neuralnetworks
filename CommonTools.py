@@ -168,7 +168,8 @@ def makeMetrics(nPoints,anomalous,normal,reverse=False):
     distances = []
     f1s = []
     for slide in range(0,nPoints,1):
-        cut = max - (slide*gradation)
+        if (reverse==False): cut = min + (slide*gradation)
+        if (reverse==True): cut = max - (slide*gradation)
         n_TP=0.0
         n_FP=0.0
         n_TN=0.0
