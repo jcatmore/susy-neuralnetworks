@@ -18,17 +18,23 @@ from sklearn.metrics import precision_recall_curve
 from CommonTools import reconstructionError,reconstructionErrorByFeature,buildArraysFromROOT,makeMetrics,areaUnderROC
 from featuresLists import susyFeaturesNtup, susyWeightsNtup
 
+import logging
+
+logging.basicConfig(
+                    format="%(message)s",
+                    level=logging.DEBUG,
+                    stream=sys.stdout)
+
 ###############################################
 # MAIN PROGRAM
 
 runTraining = True
-nBackgroundEvents = 10000
-nSignalEvents = 10000
+nBackgroundEvents = 100000
+nSignalEvents = 100000
 
 # Selections
 cutBackground = "isSignal==0"
-cutSignal = "isSignal==1 && massSplit>399 && massSplit<499"
-cutSignal2 = "isSignal==1 && massSplit>599 && massSplit<699"
+cutSignal = "isSignal==1"
 
 
 # Input file and TTree
@@ -38,7 +44,7 @@ tree = inputFile.Get("TMVA_tree")
 # Build data arrays
 X_train_bg = buildArraysFromROOT(tree,susyFeaturesNtup,cutBackground,0,nBackgroundEvents,"TRAINING SAMPLE (background)")
 W_bg = buildArraysFromROOT(tree,susyWeightsNtup,cutBackground,0,nBackgroundEvents,"EVENT WEIGHTS (background)").reshape(X_train_bg.shape[0])
-X_train_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal2,0,nSignalEvents,"TRAINING SAMPLE (signal)")
+X_train_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,0,nSignalEvents,"TRAINING SAMPLE (signal)")
 W_sig = buildArraysFromROOT(tree,susyWeightsNtup,cutSignal,0,nSignalEvents,"EVENT WEIGHTS (signal)").reshape(X_train_sig.shape[0])
 X_train = np.concatenate((X_train_bg,X_train_sig),0)
 W = np.concatenate((W_bg,W_sig),0)
@@ -65,8 +71,11 @@ if runTraining:
                     Layer("Rectifier", units=36),
                     Layer("Softmax")],
             learning_rate=0.01,
-            batch_size = 10,
-            n_iter=100)
+            batch_size = 100,
+            n_iter=2000,
+            valid_size=0.25,
+            n_stable=200)
+            
     # Training
     nn.fit(X_train,Y)
     pickle.dump(nn, open('nn_susy_classification.pkl', 'wb'))
@@ -109,8 +118,8 @@ ax2.hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][
 # ROC
 fpr, tpr, thresholds = roc_curve(Y, probabilities_test[:,1], pos_label=1)
 print "Area under ROC = ",roc_auc_score(Y, probabilities_test[:,1])
-figB, axsB = plt.subplots(1,2)
-axB1,axB2 = axsB.ravel()
+figB, axB1 = plt.subplots()
+#axB1,axB2 = axsB.ravel()
 axB1.plot(fpr, tpr, label='ROC curve')
 axB1.plot([0, 1], [0, 1], 'k--')
 axB1.set_xlim([0.0, 1.0])
@@ -118,22 +127,13 @@ axB1.set_ylim([0.0, 1.05])
 axB1.set_xlabel('False Signal Rate')
 axB1.set_ylabel('True Signal Rate')
 # Precision/recall
-precision, recall, threshold = precision_recall_curve(Y, probabilities_test[:,1])
-axB2.plot(recall, precision, label='Recall vs precision')
-axB1.plot([0, 1], [0, 1], 'k--')
-axB2.set_xlim([0.0, 1.0])
-axB2.set_ylim([0.0, 1.05])
-axB2.set_xlabel('Precision')
-axB2.set_ylabel('Recall')
+#precision, recall, threshold = precision_recall_curve(Y, probabilities_test[:,1])
+#axB2.plot(recall, precision, label='Recall vs precision')
+#axB1.plot([0, 1], [0, 1], 'k--')
+#axB2.set_xlim([0.0, 1.0])
+#axB2.set_ylim([0.0, 1.05])
+#axB2.set_xlabel('Precision')
+#axB2.set_ylabel('Recall')
+
 
 plt.show()
-
-
-## Plotting - raw variables
-#figA, axsA = plt.subplots(4, 4)
-#nColumn = 0
-#for axA in axsA.ravel():
-#    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled', normed=True)
-#    axA.hist(X_anomaly[:,nColumn][rec_errors_anomaly > -3.0], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    #axA.hist(X_anomaly[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    nColumn = nColumn+1

@@ -13,12 +13,19 @@ from sklearn import metrics
 from CommonTools import reconstructionError,reconstructionErrorByFeature,buildArraysFromROOT,makeMetrics,areaUnderROC
 from featuresLists import susyFeaturesNtup, susyWeightsNtup
 
+import logging
+
+logging.basicConfig(
+                    format="%(message)s",
+                    level=logging.DEBUG,
+                    stream=sys.stdout)
+
 ###############################################
 # MAIN PROGRAM
 
 runTraining = True
 nBackgroundEvents = 100000
-nSignalEvents = 55000
+nSignalEvents = 100000
 
 # Selections
 cutBackground = "isSignal==0"
@@ -54,7 +61,8 @@ if runTraining:
                    learning_rate=0.01,
                    batch_size = 100,
                    #learning_rule = "momentum",
-                   n_iter=100)
+                   n_iter=2000,
+                   valid_size=0.25)
     # Training
     nn.fit(X_train,Y_train)
     pickle.dump(nn, open('autoencoder.pkl', 'wb'))
@@ -88,42 +96,12 @@ ax2.hist(rec_errors_diff, 250, facecolor='green', alpha=0.4, histtype='stepfille
 ax3.hist(rec_errors_diff, 250, facecolor='green', alpha=0.4, histtype='stepfilled')
 ax3.hist(rec_errors_sig, 250, facecolor='red', alpha=0.4, histtype='stepfilled')
 
-## Plotting - reconstruction error per variable
-#figD, axsD = plt.subplots(6, 6)
-#nColumn = 0
-#for axD in axsD.ravel():
-#    axD.hist(rec_errors_varwise_diff[:,nColumn], 250, facecolor='green', alpha=0.4, histtype='stepfilled', normed=True)
-#    axD.hist(rec_errors_varwise_sig[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    nColumn = nColumn+1
-#
-## Plotting - raw variables
-#figA, axsA = plt.subplots(6, 6)
-#nColumn = 0
-#for axA in axsA.ravel():
-#    axA.hist(X_train[:,nColumn], 250, facecolor='blue', alpha=0.4, histtype='stepfilled')
-#    #axA.hist(X_signal[:,nColumn][rec_errors_sig > -1.75], 250, facecolor='red', alpha=0.4, histtype='stepfilled', normed=True)
-#    axA.hist(X_signal[:,nColumn], 250, facecolor='red', alpha=0.4, histtype='stepfilled')
-#    nColumn = nColumn+1
-#
-## Plotting - labels
-#labelsList = [val.GetName() for val in tree.GetListOfBranches() if val.GetName() in susyFeaturesNtup]
-#figC, axsC = plt.subplots(6, 6)
-#for axC in axsC.ravel():
-#    if len(labelsList)==0:
-#        break
-#    label = labelsList[0]
-#    axC.text(0.1, 0.5, label, fontsize=10)
-#    axC.set_xticklabels([])
-#    axC.set_yticklabels([])
-#    axC.set_xticks([])
-#    axC.set_yticks([])
-#    labelsList.pop(0)
-
 # Plotting - performance curves
-true_positive,false_positive,precisions,recalls,f1s = makeMetrics(200,rec_errors_sig,rec_errors_diff)
-print "Area under ROC = ",areaUnderROC(true_positive,false_positive)
-figB, axsB = plt.subplots(1,2)
-axB1,axB2 = axsB.ravel()
+true_positive,false_positive,precisions,recalls,f1s = makeMetrics(2000,rec_errors_sig,rec_errors_diff)
+auc = areaUnderROC(true_positive,false_positive)
+print "Area under ROC = ",auc
+figB, axB1 = plt.subplots()
+#axB1,axB2 = axsB.ravel()
 # ROC
 axB1.plot(false_positive, true_positive, label='ROC curve')
 axB1.plot([0, 1], [0, 1], 'k--')
@@ -131,13 +109,15 @@ axB1.set_xlim([0.0, 1.0])
 axB1.set_ylim([0.0, 1.05])
 axB1.set_xlabel('False Anomaly Rate')
 axB1.set_ylabel('True Anomaly Rate')
+axB1.text(0.4,0.2,"AUC = %.4f" % auc,fontsize=15)
+
 # Precision, recall
-axB2.plot(recalls, precisions, label='Precision-recall curve')
-axB2.plot([0, 1.0], [0.5, 0.5], 'k--')
-axB2.set_xlim([0.0, 1.0])
-axB2.set_ylim([0.0, 1.05])
-axB2.set_xlabel('Recall')
-axB2.set_ylabel('Precision')
+#axB2.plot(recalls, precisions, label='Precision-recall curve')
+#axB2.plot([0, 1.0], [0.5, 0.5], 'k--')
+#axB2.set_xlim([0.0, 1.0])
+#axB2.set_ylim([0.0, 1.05])
+#axB2.set_xlabel('Recall')
+#axB2.set_ylabel('Precision')
 
 plt.show()
 

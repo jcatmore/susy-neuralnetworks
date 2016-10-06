@@ -41,6 +41,8 @@ cutList = ["isSignal==1 && massSplit<199",
            "isSignal==1 && massSplit>499 && massSplit<599",
            "isSignal==1 && massSplit>599 && massSplit<699"]
 
+#cutSpcl = "isSignal==1 && massSplit<199"
+
 # Set up the axes for plotting
 figROC, axsROC = plt.subplots(2,3)
 axesROC = axsROC.ravel()
@@ -52,7 +54,6 @@ axesCounter = 0
 for cut in cutList:
 
     # Selections and numbers of events
-    
     cutSignal = cut
     tcut = TCut(cutSignal)
     tree.Draw(">>eventList",tcut)
@@ -72,11 +73,13 @@ for cut in cutList:
     #W = np.concatenate((W_bg,W_sig),0)
 
     X_test_bg = X_test_bg_all[0:nBackgroundEvents,:]
-    X_test_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cutSignal,nSignalEvents,nSignalEvents,"TESTING SAMPLE (signal)")
+    X_test_sig = buildArraysFromROOT(tree,susyFeaturesNtup,cut,nSignalEvents,nSignalEvents,"TESTING SAMPLE (signal)")
     X_test = np.concatenate((X_test_bg,X_test_sig),0)
 
     Y_bg = np.zeros(nBackgroundEvents).reshape(nBackgroundEvents,1)
     Y_sig = np.ones(nSignalEvents).reshape(nSignalEvents,1)
+    Y_sig = np.ones(nSignalEvents).reshape(nSignalEvents,1)
+    Y = np.concatenate((Y_bg,Y_sig),0)
     Y = np.concatenate((Y_bg,Y_sig),0)
 
     # Feature scaling
@@ -94,7 +97,7 @@ for cut in cutList:
                                 Layer("Softmax")],
                         learning_rate=0.01,
                         batch_size = 100,
-                        n_iter=500)
+                        n_iter=100)
     # Training
     nn.fit(X_train,Y)
     pickle.dump(nn, open('nn_susy_classification.pkl', 'wb'))
@@ -122,7 +125,8 @@ for cut in cutList:
     ## Plotting - performance curves
     ## ROC
     fpr, tpr, thresholds = roc_curve(Y, probabilities_test[:,1], pos_label=1)
-    print "Area under ROC = ",roc_auc_score(Y, probabilities_test[:,1])
+    auc = roc_auc_score(Y, probabilities_test[:,1])
+    print "Area under ROC = ",auc
     print ""
     print ""
     print ""
@@ -132,6 +136,7 @@ for cut in cutList:
     axesROC[axesCounter].set_ylim([0.0, 1.05])
     axesROC[axesCounter].set_xlabel('False Signal Rate')
     axesROC[axesCounter].set_ylabel('True Signal Rate')
+    axesROC[axesCounter].text(0.4,0.2,"AUC = %.4f" % auc,fontsize=15)
     # Precision/recall
     #precision, recall, threshold = precision_recall_curve(Y, probabilities_test[:,1])
     #axB2.plot(recall, precision, label='Recall vs precision')
@@ -142,12 +147,13 @@ for cut in cutList:
     #axB2.set_ylabel('Recall')
     
     # NN probabilities
+    bins = np.linspace(-0.1, 1.1, 250)
     axesProb[axesCounter].set_ylabel("Events")
     axesProb[axesCounter].set_xlabel("NN signal probability")
     #axesProb[axesCounter].hist(probabilities_train[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='blue', alpha=0.4, histtype='stepfilled')
     #axesProb[axesCounter].hist(probabilities_train[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
-    axesProb[axesCounter].hist(probabilities_test[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='green', alpha=0.4, histtype='stepfilled')
-    axesProb[axesCounter].hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], 250, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
+    axesProb[axesCounter].hist(probabilities_test[(Y==0.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], bins, (-0.5,1.5), facecolor='green', alpha=0.4, histtype='stepfilled')
+    axesProb[axesCounter].hist(probabilities_test[(Y==1.0).reshape(nBackgroundEvents+nSignalEvents,)][:,1], bins, (-0.5,1.5), facecolor='red', alpha=0.4, histtype='stepfilled')
 
     axesCounter = axesCounter+1
 
